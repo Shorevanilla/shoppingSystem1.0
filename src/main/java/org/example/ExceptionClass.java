@@ -121,7 +121,25 @@ public class ExceptionClass {
   
 
 
-
+    public static int findDataRow(String filePath, String sheetName, String data, int searchColumn) {
+        try (Workbook workbook = WorkbookFactory.create(new FileInputStream(filePath))) {
+            Sheet sheet = workbook.getSheet(sheetName);
+    
+            for (int rowNum = 0; rowNum <= sheet.getLastRowNum(); rowNum++) {
+                Row row = sheet.getRow(rowNum);
+                if (row != null) {
+                    Cell cell = row.getCell(searchColumn);
+                    if (cell != null && Excelor.getValueAsString(cell).equals(data)) {
+                        return rowNum + 1; // 返回行号（行号从1开始）
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return -1; // 未找到，返回-1
+    }
+    
 
 
 

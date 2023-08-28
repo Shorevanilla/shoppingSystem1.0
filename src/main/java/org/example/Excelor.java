@@ -70,6 +70,39 @@ public static void managerExcelCreator() {
     }
 }
 
+public static int findRowByInput(Sheet sheet, String input, int loginType) {
+    for (Row row : sheet) {
+        Cell usertlNumberCell = row.getCell(loginType);
+        if (usertlNumberCell != null && usertlNumberCell.getStringCellValue().equals(input)) {
+            return row.getRowNum(); // 返回行号
+        }
+    }
+    return -1; // 未找到
+}
+
+
+
+public static int findDataRow(String filePath, String sheetName, String data, int searchColumn) {
+    try (Workbook workbook = WorkbookFactory.create(new FileInputStream(filePath))) {
+        Sheet sheet = workbook.getSheet(sheetName);
+
+        for (int rowNum = 0; rowNum <= sheet.getLastRowNum(); rowNum++) {
+            Row row = sheet.getRow(rowNum);
+            if (row != null) {
+                Cell cell = row.getCell(searchColumn);
+                if (cell != null && Excelor.getValueAsString(cell).equals(data)) {
+                    return rowNum + 1; // 返回行号（行号从1开始）
+                }
+            }
+        }
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+    return -1; // 未找到，返回-1
+}
+
+
+
     public static String getDataFromExcel(String filePath, String sheetPath, int searchColumnIndex, String searchValue,
             int targetColumnIndex) {
         try (Workbook workbook = new XSSFWorkbook(new FileInputStream(filePath))) {
@@ -90,7 +123,22 @@ public static void managerExcelCreator() {
         }
         return null;
     }
-
+    public static String getCellValueByRowColumn(String filePath, String sheetName, int rowNumber, int columnNumber) {
+        try (Workbook workbook = WorkbookFactory.create(new FileInputStream(filePath))) {
+            Sheet sheet = workbook.getSheet(sheetName);
+            
+            Row row = sheet.getRow(rowNumber - 1); // 行号从1开始，索引从0开始
+            if (row != null) {
+                Cell cell = row.getCell(columnNumber ); // 列号从0开始，索引从0开始
+                if (cell != null) {
+                    return getValueAsString(cell);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return ""; // 未找到单元格或发生错误，返回空字符串
+    }
     public static void updateDataInExcel(String filePath, String sheetName, int searchColumnIndex, String searchValue,
             int targetColumnIndex, String newValue) {
         try (Workbook workbook = new XSSFWorkbook(new FileInputStream(filePath))) {

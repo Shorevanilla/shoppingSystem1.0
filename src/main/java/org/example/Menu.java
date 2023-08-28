@@ -321,8 +321,18 @@ public class Menu {
         while (!input.equals("quit")) {
             String number = "";
             String verify = "";
+            String name="";
+            int row=-1;
             System.out.println("***********找回密码***********");
-            System.out.println("请选择找回密码的方式：\n 1.电话号码 \n2.邮箱");
+            System.out.println("请输入用户名：");
+            name=scan.next();
+            if(ExceptionClass.isUsernameUnique(name))
+            {
+                System.out.println("用户名无效");
+           continue;}
+          else 
+           row =Excelor.findDataRow(Excelor.FilePath,Excelor.sheetName_user,name,Excelor.Name);
+            System.out.println("请选择找回密码的方式：\n1.电话号码 \n2.邮箱");
             input = scan.next();
             while (!input.equals("quit") && !number.equals("quit")) {
                 if (input.equals("1"))
@@ -330,7 +340,7 @@ public class Menu {
                         System.out.println("请输入电话号码：");
                         number = scan.next();
                         if (!number.equals("quit")) {
-                            if (!ExceptionClass.isTlNOUnique(number)) {
+                          if (Excelor.getCellValueByRowColumn(Excelor.FilePath,Excelor.sheetName_user,row,Excelor.TlNumber).equals(number)) {//
                                 int min = 10000; // 最小值（包含）
                                 int max = 99999; // 最大值（包含）
 
@@ -347,6 +357,7 @@ public class Menu {
                                         scan.close();
                                         return;
                                     } else {
+                                        if(!verify.equals("quit"))
                                         System.out.println("验证码有误");
                                         continue;
                                     }
@@ -361,7 +372,7 @@ public class Menu {
                         System.out.println("请输入邮箱：");
                         number = scan.next();
                         if (!number.equals("quit")) {
-                            if (!ExceptionClass.isDataUnique(Excelor.FilePath,Excelor.sheetName_user,number,Excelor.email)) {
+                            if (Excelor.getCellValueByRowColumn(Excelor.FilePath,Excelor.sheetName_user,row,Excelor.email).equals(number)) {
                                 int min = 10000; // 最小值（包含）
                                 int max = 99999; // 最大值（包含）
 
