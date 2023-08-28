@@ -12,8 +12,10 @@ public class Manager {
         
         Excelor.updateDataInExcel(filePath, Excelor.sheetName_manager, searchColumnIndex,  searchValue,  targetColumnIndex,newPassword);
     }
-    void displayUserIF(){
+    static void displayUserInformation(){
 
     }
-    
+    static void displayAllUserInformation(){
+
+    }
 }
