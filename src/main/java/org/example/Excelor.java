@@ -161,6 +161,27 @@ public static int findDataRow(String filePath, String sheetName, String data, in
         }
     }
 
+    public static void updateDataInExcel(String filePath, String sheetName, int targetRow, int targetColumn, String newValue) {
+        try (Workbook workbook = new XSSFWorkbook(new FileInputStream(filePath))) {
+            Sheet sheet = workbook.getSheet(sheetName);
+
+            if (targetRow >= 1 && targetRow <= sheet.getLastRowNum()) {
+                Row row = sheet.getRow(targetRow - 1); // 行号从1开始，索引从0开始
+                if (row != null) {
+                    Cell targetCell = row.getCell(targetColumn, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                    targetCell.setCellValue(newValue);
+                }
+            }
+
+            try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
+                workbook.write(fileOut);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+
     public static String getValueAsString(Cell cell) {
         switch (cell.getCellType()) {
             case STRING:

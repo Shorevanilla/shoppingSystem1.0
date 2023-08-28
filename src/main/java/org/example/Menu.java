@@ -313,7 +313,79 @@ public class Menu {
         } // 管理员密码修改
         scan.close();
     }
+    void userChangePassword() {
+        boolean ifquit=false;
+        String ID = "";
+        String tPassword = "";
+        String input = "";
+        Scanner scan = new Scanner(System.in);
+        int row=-1;
+        while (!ID.equals("quit")) {// 管理员密码修改
+            System.out.println("***********用户密码修改***********");
+            System.out.println("请输入用户名：");
+            ID = scan.next();
 
+            if (!ID.equals("quit") && !ExceptionClass.isDataUnique(Excelor.FilePath, Excelor.sheetName_user, ID, Excelor.Name))
+                // 用户名认证通过
+                {
+                    row=Excelor.findDataRow(Excelor.FilePath, Excelor.sheetName_user,ID, Excelor.Name);
+                while (!input.equals("quit")) {// 密码验证
+                    System.out.println("请输入旧密码：");
+                    input = scan.next();
+                    if (ExceptionClass.isPasswordCorrect(Excelor.FilePath, Excelor.sheetName_user, ID, input))
+                        while (  !input.equals("quit")&&!tPassword.equals("quit")) {
+                            // 密码验证成功，进入新密码验证
+                           
+                            
+                                System.out.println("输入新密码,长度大于等于8个字符，必须是大小写字母、数字和标点符号的组合：");
+                                tPassword = scan.next();
+
+                                if (tPassword.equals("quit")) {
+                                    break; // 退出循环
+                                }
+                                try {
+                                    try {
+                                        if (ExceptionClass.validatePassword(tPassword)) {
+                                            System.out.println("请再次输入密码：");
+                                            if (ExceptionClass.validateMatchingInputs(scan.next(), tPassword)) {
+                                                ifquit = false;
+
+                                                Excelor.updateDataInExcel(Excelor.FilePath, Excelor.sheetName_user, row, Excelor.Password, tPassword);
+                                                        
+
+                                                System.out.println("密码已修改，请重新登入");
+                                                scan.close();
+                                                return; // 用户名验证通过，退出循环
+                                            }
+                                        }
+                                    } catch (ExceptionClass.PasswordValidationException e) {
+                                        System.out.println("密码不符合规范: " + e.getMessage());
+                                    }
+                                } catch (ExceptionClass.MatchingInputsValidationException e) {
+                                    System.out.println(e.getMessage());
+                                    continue;
+                                }
+                            
+
+                        }
+                    else {
+                        if(!input.equals("quit"))
+                        System.out.println("密码错误");
+                    }
+                } // 密码验证
+            }
+            else {// 用户名验证失败，继续循环
+                if (!ID.equals("quit"))
+                    System.out.println("输入用户名错误");
+                else {
+                    scan.close();
+                    return;
+                }
+            }
+
+        } // 管理员密码修改
+        scan.close();
+    }
     void userFindbackPassword() {
         String input = "";
 

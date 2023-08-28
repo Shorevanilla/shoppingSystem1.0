@@ -7,7 +7,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.FileInputStream;
-
+import java.util.regex.*;
 
 
 public class ExceptionClass {
@@ -146,24 +146,47 @@ public class ExceptionClass {
     
     public static boolean validatePassword(String password) throws PasswordValidationException {
         // Modified pattern for at least two of (letter, digit, symbol) and at least 8 characters
-        String pattern = "^(?=(?:.*[a-zA-Z]){0,1})(?=(?:.*\\d){0,1})(?=(?:.*[@$!%*?&#]){0,1})([A-Za-z\\d@$!%*?&#]{8,})$";
+        String pattern = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@$!%*?&#])[A-Za-z\\d@$!%*?&#]{8,}$";
         Pattern regexPattern = Pattern.compile(pattern);
         Matcher matcher = regexPattern.matcher(password);
-        
+
         if (!matcher.matches()) {
+            StringBuilder errorMessage = new StringBuilder("密码不符合要求：");
+             
             if (password.length() < 8) {
-                throw new PasswordValidationException("密码长度至少为8位");
-            } else if (!matcher.matches()) {
-                throw new PasswordValidationException("密码必须包含字母、数字和符号的其中两个");
-            } else if (!password.matches("[A-Za-z\\d@$!%*?&#]+")) {
-                throw new PasswordValidationException("密码包含了无效的字符");
+                errorMessage.append("密码长度至少为8位。");
+                throw new PasswordValidationException(errorMessage.toString());
+            } else {
+                boolean hasLetter = false;
+                boolean hasDigit = false;
+                boolean hasSymbol = false;
+
+                for (char c : password.toCharArray()) {
+                    if (Character.isLetter(c)) {
+                        hasLetter = true;
+                    } else if (Character.isDigit(c)) {
+                        hasDigit = true;
+                    } else if (isSymbol(c)) {
+                        hasSymbol = true;
+                    }
+                }
+
+                if ((hasLetter && hasDigit) || (hasLetter && hasSymbol) || (hasDigit && hasSymbol)) {
+                    // At least two of the three types are present
+                } else {
+                    errorMessage.append("密码必须包含字母、数字和符号的其中两种。");
+                    throw new PasswordValidationException(errorMessage.toString());
+                }
             }
         }
-        
+
         return true;
     }
     
-    
+    private static boolean isSymbol(char c) {
+        String symbols = "@$!%*?&#";
+        return symbols.indexOf(c) != -1;
+    }
     
 
     public static boolean validateMatchingInputs(String input1, String input2) throws MatchingInputsValidationException {
