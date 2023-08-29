@@ -118,7 +118,7 @@ public static int findNextEmptyRow(String filePath, String sheetName) {
     try (Workbook workbook = WorkbookFactory.create(new FileInputStream(filePath))) {
         Sheet sheet = workbook.getSheet(sheetName);
         int lastRowNum = sheet.getLastRowNum();
-        for (int rowNum = 0; rowNum <= lastRowNum; rowNum++) {
+        for (int rowNum = 1; rowNum <= lastRowNum; rowNum++) {
             Row row = sheet.getRow(rowNum);
             if (row == null) {
                 return rowNum;

@@ -12,7 +12,7 @@ import java.util.Random;
 
 public class Menu {
     // String input;
-
+    
     boolean if_access = false;
 
     void userRegister() {
@@ -96,7 +96,7 @@ public class Menu {
                         Row newRow = sheet.createRow(nextRowNum);
 
                         // 设置单元格的值，根据列的顺序
-                        newRow.createCell(Excelor.ID).setCellValue(nextRowNum); // ID，假设 ID 是自动生成的
+                        newRow.createCell(Excelor.ID).setCellValue(String.valueOf(nextRowNum)); // ID，假设 ID 是自动生成的
                         newRow.createCell(Excelor.Name).setCellValue(tampleName); // 用户名
                         newRow.createCell(Excelor.Password).setCellValue(tPassword); // 密码，这里没有加密，请根据实际需求处理
                         newRow.createCell(Excelor.userLevel).setCellValue("铜牌客户");
@@ -242,6 +242,41 @@ public class Menu {
         scanner.close();
     }
 
+    void managerLogIN() {
+        String input="";
+        Scanner scanner = new Scanner(System.in);
+    while(true){
+        System.out.println("***********管理员登入***********");
+
+        System.out.println("请输入用户名：");
+        input = scanner.next();
+        if(input.equals("quit")) break;
+        if (!ExceptionClass.isDataUnique(Excelor.mangerPath,Excelor.sheetName_manager,input,Excelor.Name)) {
+           while(true){
+            System.out.println("请输入密码：");
+            String password = scanner.next();
+            if(password.equals("quit")) break;
+            if (ExceptionClass.isPasswordCorrect(input, password, Excelor.Name)) {
+                if_access = true;
+                System.out.println("管理员登入成功");
+                scanner.close();
+                return;
+            } else {
+                System.out.println("密码错误，请重新尝试");
+            }
+        }
+        } else {
+            System.out.println("用户名不存在");
+        }
+    }
+    scanner.close();
+    }
+   
+   void logOut(){
+    System.out.println("已经退出登入");
+    if_access=false;
+   } 
+    
     void resetManagerPassword() {
         boolean ifquit = false;
         String ID = "";
@@ -284,6 +319,7 @@ public class Menu {
                                                         Excelor.Password, newPassword);
 
                                                 System.out.println("密码已修改，请重新登入");
+                                                if_access=false;
                                                 scan.close();
                                                 return; // 用户名验证通过，退出循环
                                             }
@@ -483,13 +519,11 @@ public class Menu {
         scan.close();
     }
 
-    
-
-    static void addCommodity() {
+     void addCommodity() {
         Commodity commodity = new Commodity();
         String input = "";
         Scanner scan = new Scanner(System.in);
-    
+
         while (true) {
             System.out.println("**************添加商品**************");
             System.out.println("请输入商品编号：");
@@ -596,30 +630,31 @@ public class Menu {
         }
         scan.close();
     }
+
     void modifyCommodityIF() {
-        //Commodity commodity = new Commodity();
+        // Commodity commodity = new Commodity();
         String input = "";
         Scanner scan = new Scanner(System.in);
         int row = -1;
-        
+
         System.out.println("*******************修改商品信息*******************");
-        
+
         while (true) {
             System.out.println("请输入商品序列号：");
             input = scan.next();
-            
+
             if (input.equals("quit")) {
                 break;
             }
-            
+
             row = Excelor.findDataRow(Excelor.commodityPath, Excelor.sheetName_commodity, input, Excelor.Serial_NO);
-            
+
             if (row > -1) {
                 Manager.showSingleCommodity(Excelor.commodityPath, Excelor.sheetName_commodity, row);
                 while (true) {
                     System.out.println("1.商品名称\n2.生产厂家\n3.生产日期\n4.产品型号\n5.进货价\n6.零售价格\n7.数量\n请输入对应数字以修改商品信息：");
                     input = scan.next();
-                    
+
                     if (input.equals("quit")) {
                         break;
                     } else {
@@ -628,7 +663,8 @@ public class Menu {
                                 System.out.println("请输入新的商品名称：");
                                 input = scan.next();
                                 if (!input.equals("quit")) {
-                                    Excelor.updateDataInExcel(Excelor.commodityPath, Excelor.sheetName_commodity, row, Excelor.Name, input);
+                                    Excelor.updateDataInExcel(Excelor.commodityPath, Excelor.sheetName_commodity, row,
+                                            Excelor.Name, input);
                                     System.out.println("商品名称已更新。");
                                 }
                                 break;
@@ -636,7 +672,8 @@ public class Menu {
                                 System.out.println("请输入新的生产厂家：");
                                 input = scan.next();
                                 if (!input.equals("quit")) {
-                                    Excelor.updateDataInExcel(Excelor.commodityPath, Excelor.sheetName_commodity, row, Excelor.Manufacturer, input);
+                                    Excelor.updateDataInExcel(Excelor.commodityPath, Excelor.sheetName_commodity, row,
+                                            Excelor.Manufacturer, input);
                                     System.out.println("生产厂家已更新。");
                                 }
                                 break;
@@ -645,7 +682,8 @@ public class Menu {
                                 input = scan.next();
                                 if (!input.equals("quit")) {
                                     if (input.matches("\\d{4}-\\d{2}-\\d{2}")) {
-                                        Excelor.updateDataInExcel(Excelor.commodityPath, Excelor.sheetName_commodity, row, Excelor.MnDate, input);
+                                        Excelor.updateDataInExcel(Excelor.commodityPath, Excelor.sheetName_commodity,
+                                                row, Excelor.MnDate, input);
                                         System.out.println("生产日期已更新。");
                                     } else {
                                         System.out.println("生产日期格式不正确。");
@@ -656,7 +694,8 @@ public class Menu {
                                 System.out.println("请输入新的产品型号：");
                                 input = scan.next();
                                 if (!input.equals("quit")) {
-                                    Excelor.updateDataInExcel(Excelor.commodityPath, Excelor.sheetName_commodity, row, Excelor.Type, input);
+                                    Excelor.updateDataInExcel(Excelor.commodityPath, Excelor.sheetName_commodity, row,
+                                            Excelor.Type, input);
                                     System.out.println("产品型号已更新。");
                                 }
                                 break;
@@ -666,7 +705,8 @@ public class Menu {
                                 if (!input.equals("quit")) {
                                     try {
                                         float price = Float.parseFloat(input);
-                                        Excelor.updateDataInExcel(Excelor.commodityPath, Excelor.sheetName_commodity, row, Excelor.Prime_Cost, String.valueOf(price));
+                                        Excelor.updateDataInExcel(Excelor.commodityPath, Excelor.sheetName_commodity,
+                                                row, Excelor.Prime_Cost, String.valueOf(price));
                                         System.out.println("进货价已更新。");
                                     } catch (NumberFormatException e) {
                                         System.out.println("请输入有效的数字。");
@@ -679,7 +719,8 @@ public class Menu {
                                 if (!input.equals("quit")) {
                                     try {
                                         float price = Float.parseFloat(input);
-                                        Excelor.updateDataInExcel(Excelor.commodityPath, Excelor.sheetName_commodity, row, Excelor.Price, String.valueOf(price));
+                                        Excelor.updateDataInExcel(Excelor.commodityPath, Excelor.sheetName_commodity,
+                                                row, Excelor.Price, String.valueOf(price));
                                         System.out.println("零售价格已更新。");
                                     } catch (NumberFormatException e) {
                                         System.out.println("请输入有效的数字。");
@@ -692,7 +733,8 @@ public class Menu {
                                 if (!input.equals("quit")) {
                                     try {
                                         int amount = Integer.parseInt(input);
-                                        Excelor.updateDataInExcel(Excelor.commodityPath, Excelor.sheetName_commodity, row, Excelor.Amount, String.valueOf(amount));
+                                        Excelor.updateDataInExcel(Excelor.commodityPath, Excelor.sheetName_commodity,
+                                                row, Excelor.Amount, String.valueOf(amount));
                                         System.out.println("数量已更新。");
                                     } catch (NumberFormatException e) {
                                         System.out.println("请输入有效的整数。");
@@ -708,36 +750,75 @@ public class Menu {
                 System.out.println("未找到对应的商品序列号。");
             }
         }
-        
+
         scan.close();
     }
-    
-  void deleteCommodity(){
-    String input = "";
+
+    void managerDeleteCommodity() {
+        String input = "";
         Scanner scan = new Scanner(System.in);
         int row = -1;
         System.out.println("*******************删除商品信息*******************");
-        
+
         while (true) {
             System.out.println("请输入商品编号：");
             input = scan.next();
-            if(input.equals("quit"))
-            break;
-            row = Excelor.findDataRowSinceZero(Excelor.commodityPath, Excelor.sheetName_commodity, input, Excelor.Serial_NO);
-            if(row>-1){
+            if (input.equals("quit"))
+                break;
+            row = Excelor.findDataRowSinceZero(Excelor.commodityPath, Excelor.sheetName_commodity, input,
+                    Excelor.Serial_NO);
+            if (row > -1) {
                 Manager.showSingleCommodity(Excelor.commodityPath, Excelor.sheetName_commodity, row);
                 System.out.println("再次输入商品编号确定删除该商品：");
-                if(input.equals( scan.next()))
-               { Excelor.deleteDataInExcel(Excelor.commodityPath, Excelor.sheetName_commodity, row);
-                System.out.println("成功删除商品");
-                break;
+                if (input.equals(scan.next())) {
+                    Excelor.deleteDataInExcel(Excelor.commodityPath, Excelor.sheetName_commodity, row);
+                    System.out.println("成功删除商品");
+                    break;
+                } else if (input.equals("quit"))
+                    break;
+                else
+                    continue;
             }
-                else if(input.equals("quit")) break;
-                else continue;
-            }
-            
+
         }
         scan.close();
-  }
- 
+    }
+
+    void queryUser() {
+        String input = "";
+        Scanner scan = new Scanner(System.in);
+       // int row = -1;
+        while (true) {
+            System.out.println("*******************查找用户*******************");
+            System.out.println("请选择查找方式：\n1.模糊搜索\n2.精确查找\n输入对应数字进入对应查找");
+            input = scan.next();
+            if (!input.equals("quit"))
+                switch (input) {
+                    case "1":
+                        System.out.println("请输入用户ID或用户名进行模糊搜索");
+                        input = scan.next();
+                        if (!input.equals("quit")) {
+                            Manager.queryUser(Excelor.FilePath, Excelor.sheetName_user, input);
+                            break;
+                        } else
+                            break;
+                    case "2":
+                        System.out.println("请输入用户ID或用户名进行精确查找");
+                        input = scan.next();
+                        if (!input.equals("quit")) {
+                            Manager.searchUser(Excelor.FilePath, Excelor.sheetName_user, input);
+                            break;
+                        } else
+                            break;
+                    default:
+                        System.out.println("请输入正确的指令");
+                        break;
+                }
+            else
+                break;
+        }
+        scan.close();
+
+    }
+
 }
