@@ -20,6 +20,17 @@ public class Excelor {
     public static String sheetName_user = "User";
     public static String sheetName_manager = "Manager";
     public static String mangerPath="/workspace/shoppingSystem1.0/Manager.xlsx";
+    
+    public static String commodityPath="/workspace/shoppingSystem1.0/Commodity.xlsx";
+    public static String sheetName_commodity = "Commodity";
+    public static final int  Serial_NO=0;
+    public static final int Manufacturer=2;
+    public static final int MnDate=3;
+    public static final int Type=4;
+    public static final int Prime_Cost=5;
+    public static final int Price=6;
+    public static final int  Amount=7;
+
     public static void userExcelCreator() {
         String[] columnHeaders = { "ID", "Name", "Password", "User Level", "Email", "Tl Number", "Consumed",
                 "If Locked", "Register time" };
@@ -68,6 +79,55 @@ public static void managerExcelCreator() {
     } catch (IOException e) {
         e.printStackTrace();
     }
+}
+
+public static void commodityExcelCreator() {
+    String[] columnHeaders = { "Serial NO", "Name", "Manufacturer", "MnDate", "Type", "Prime Cost", "Price", "Amount" };
+
+    try (Workbook workbook = new XSSFWorkbook()) {
+        Sheet sheet = workbook.createSheet("Commodity");
+
+        // Create header row
+        Row headerRow = sheet.createRow(0);
+        for (int i = 0; i < columnHeaders.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(columnHeaders[i]);
+        }
+        
+        // Create sample commodity
+        Row commodityRow = sheet.createRow(1);
+        commodityRow.createCell(0).setCellValue("123456"); // Serial NO
+        commodityRow.createCell(1).setCellValue("Sample Commodity"); // Name
+        commodityRow.createCell(2).setCellValue("Sample Manufacturer"); // Manufacturer
+        commodityRow.createCell(3).setCellValue("2023-07-11"); // MnDate
+        commodityRow.createCell(4).setCellValue("Sample Type"); // Type
+        commodityRow.createCell(5).setCellValue(10.0); // Prime Cost
+        commodityRow.createCell(6).setCellValue(15.0); // Price
+        commodityRow.createCell(7).setCellValue(100); // Amount
+        
+        // Save the Excel file
+        try (FileOutputStream fileOut = new FileOutputStream("Commodity.xlsx")) {
+            workbook.write(fileOut);
+        }
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+public static int findNextEmptyRow(String filePath, String sheetName) {
+    try (Workbook workbook = WorkbookFactory.create(new FileInputStream(filePath))) {
+        Sheet sheet = workbook.getSheet(sheetName);
+        int lastRowNum = sheet.getLastRowNum();
+        for (int rowNum = 0; rowNum <= lastRowNum; rowNum++) {
+            Row row = sheet.getRow(rowNum);
+            if (row == null) {
+                return rowNum;
+            }
+        }
+        return lastRowNum + 1;
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+    return -1; // Return -1 if there's an error
 }
 
 public static int findRowByInput(Sheet sheet, String input, int loginType) {

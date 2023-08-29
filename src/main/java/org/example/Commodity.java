@@ -10,5 +10,7 @@ public class Commodity {
     float  price;
     int    amount;
 
+            }
     
-}
+    
+

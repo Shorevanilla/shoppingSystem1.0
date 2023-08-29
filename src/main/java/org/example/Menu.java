@@ -313,68 +313,67 @@ public class Menu {
         } // 管理员密码修改
         scan.close();
     }
+
     void userChangePassword() {
-        boolean ifquit=false;
+        boolean ifquit = false;
         String ID = "";
         String tPassword = "";
         String input = "";
         Scanner scan = new Scanner(System.in);
-        int row=-1;
+        int row = -1;
         while (!ID.equals("quit")) {// 管理员密码修改
             System.out.println("***********用户密码修改***********");
             System.out.println("请输入用户名：");
             ID = scan.next();
 
-            if (!ID.equals("quit") && !ExceptionClass.isDataUnique(Excelor.FilePath, Excelor.sheetName_user, ID, Excelor.Name))
-                // 用户名认证通过
-                {
-                    row=Excelor.findDataRow(Excelor.FilePath, Excelor.sheetName_user,ID, Excelor.Name);
+            if (!ID.equals("quit")
+                    && !ExceptionClass.isDataUnique(Excelor.FilePath, Excelor.sheetName_user, ID, Excelor.Name))
+            // 用户名认证通过
+            {
+                row = Excelor.findDataRow(Excelor.FilePath, Excelor.sheetName_user, ID, Excelor.Name);
                 while (!input.equals("quit")) {// 密码验证
                     System.out.println("请输入旧密码：");
                     input = scan.next();
                     if (ExceptionClass.isPasswordCorrect(Excelor.FilePath, Excelor.sheetName_user, ID, input))
-                        while (  !input.equals("quit")&&!tPassword.equals("quit")) {
+                        while (!input.equals("quit") && !tPassword.equals("quit")) {
                             // 密码验证成功，进入新密码验证
-                           
-                            
-                                System.out.println("输入新密码,长度大于等于8个字符，必须是大小写字母、数字和标点符号的组合：");
-                                tPassword = scan.next();
 
-                                if (tPassword.equals("quit")) {
-                                    break; // 退出循环
-                                }
+                            System.out.println("输入新密码,长度大于等于8个字符，必须是大小写字母、数字和标点符号的组合：");
+                            tPassword = scan.next();
+
+                            if (tPassword.equals("quit")) {
+                                break; // 退出循环
+                            }
+                            try {
                                 try {
-                                    try {
-                                        if (ExceptionClass.validatePassword(tPassword)) {
-                                            System.out.println("请再次输入密码：");
-                                            if (ExceptionClass.validateMatchingInputs(scan.next(), tPassword)) {
-                                                ifquit = false;
+                                    if (ExceptionClass.validatePassword(tPassword)) {
+                                        System.out.println("请再次输入密码：");
+                                        if (ExceptionClass.validateMatchingInputs(scan.next(), tPassword)) {
+                                            ifquit = false;
 
-                                                Excelor.updateDataInExcel(Excelor.FilePath, Excelor.sheetName_user, row, Excelor.Password, tPassword);
-                                                        
+                                            Excelor.updateDataInExcel(Excelor.FilePath, Excelor.sheetName_user, row,
+                                                    Excelor.Password, tPassword);
 
-                                                System.out.println("密码已修改，请重新登入");
-                                                scan.close();
-                                                return; // 用户名验证通过，退出循环
-                                            }
+                                            System.out.println("密码已修改，请重新登入");
+                                            scan.close();
+                                            return; // 用户名验证通过，退出循环
                                         }
-                                    } catch (ExceptionClass.PasswordValidationException e) {
-                                        System.out.println("密码不符合规范: " + e.getMessage());
                                     }
-                                } catch (ExceptionClass.MatchingInputsValidationException e) {
-                                    System.out.println(e.getMessage());
-                                    continue;
+                                } catch (ExceptionClass.PasswordValidationException e) {
+                                    System.out.println("密码不符合规范: " + e.getMessage());
                                 }
-                            
+                            } catch (ExceptionClass.MatchingInputsValidationException e) {
+                                System.out.println(e.getMessage());
+                                continue;
+                            }
 
                         }
                     else {
-                        if(!input.equals("quit"))
-                        System.out.println("密码错误");
+                        if (!input.equals("quit"))
+                            System.out.println("密码错误");
                     }
                 } // 密码验证
-            }
-            else {// 用户名验证失败，继续循环
+            } else {// 用户名验证失败，继续循环
                 if (!ID.equals("quit"))
                     System.out.println("输入用户名错误");
                 else {
@@ -386,6 +385,7 @@ public class Menu {
         } // 管理员密码修改
         scan.close();
     }
+
     void userFindbackPassword() {
         String input = "";
 
@@ -393,17 +393,16 @@ public class Menu {
         while (!input.equals("quit")) {
             String number = "";
             String verify = "";
-            String name="";
-            int row=-1;
+            String name = "";
+            int row = -1;
             System.out.println("***********找回密码***********");
             System.out.println("请输入用户名：");
-            name=scan.next();
-            if(ExceptionClass.isUsernameUnique(name))
-            {
+            name = scan.next();
+            if (ExceptionClass.isUsernameUnique(name)) {
                 System.out.println("用户名无效");
-           continue;}
-          else 
-           row =Excelor.findDataRow(Excelor.FilePath,Excelor.sheetName_user,name,Excelor.Name);
+                continue;
+            } else
+                row = Excelor.findDataRow(Excelor.FilePath, Excelor.sheetName_user, name, Excelor.Name);
             System.out.println("请选择找回密码的方式：\n1.电话号码 \n2.邮箱");
             input = scan.next();
             while (!input.equals("quit") && !number.equals("quit")) {
@@ -412,7 +411,8 @@ public class Menu {
                         System.out.println("请输入电话号码：");
                         number = scan.next();
                         if (!number.equals("quit")) {
-                          if (Excelor.getCellValueByRowColumn(Excelor.FilePath,Excelor.sheetName_user,row,Excelor.TlNumber).equals(number)) {//
+                            if (Excelor.getCellValueByRowColumn(Excelor.FilePath, Excelor.sheetName_user, row,
+                                    Excelor.TlNumber).equals(number)) {//
                                 int min = 10000; // 最小值（包含）
                                 int max = 99999; // 最大值（包含）
 
@@ -429,8 +429,8 @@ public class Menu {
                                         scan.close();
                                         return;
                                     } else {
-                                        if(!verify.equals("quit"))
-                                        System.out.println("验证码有误");
+                                        if (!verify.equals("quit"))
+                                            System.out.println("验证码有误");
                                         continue;
                                     }
                                 }
@@ -444,7 +444,8 @@ public class Menu {
                         System.out.println("请输入邮箱：");
                         number = scan.next();
                         if (!number.equals("quit")) {
-                            if (Excelor.getCellValueByRowColumn(Excelor.FilePath,Excelor.sheetName_user,row,Excelor.email).equals(number)) {
+                            if (Excelor.getCellValueByRowColumn(Excelor.FilePath, Excelor.sheetName_user, row,
+                                    Excelor.email).equals(number)) {
                                 int min = 10000; // 最小值（包含）
                                 int max = 99999; // 最大值（包含）
 
@@ -461,22 +462,228 @@ public class Menu {
                                         scan.close();
                                         return;
                                     } else {
-                                        if(!verify.equals("quit"))
-                                        System.out.println("验证码有误");
+                                        if (!verify.equals("quit"))
+                                            System.out.println("验证码有误");
                                         continue;
                                     }
                                 }
                             } else
-                            
+
                                 System.out.println("输入的邮箱有误:");
                         } else
                             break;// 电话号码输入quit退出密码
                     }
+                } else {
+                    System.out.println("输入的指令无效");
+                    break;
                 }
-                else {System.out.println("输入的指令无效");break;}
             }
 
         }
         scan.close();
     }
+
+    static void add() {
+        Commodity commodity = new Commodity();
+        String input = "";
+        Scanner scan = new Scanner(System.in);
+
+        while (!input.equals("quit")) {
+            System.out.println("**************添加商品**************");
+            System.out.println("请输入商品编号：");
+            input = scan.next();
+            if (input.equals("quit"))
+                break;
+            else {
+                commodity.serialNO = input;
+                while (!input.equals("quit")) {
+                    System.out.println("请输入商品名称：");
+                    input = scan.next();
+                    if (input.equals("quit"))
+                        break;
+                    else {
+                        commodity.name = input;
+                        while (!input.equals("quit")) {
+                            System.out.println("请输入商品生产厂家：");
+                            input = scan.next();
+                            if (input.equals("quit"))
+                                break;
+                            else {
+                                commodity.manufacturer = input;
+                                while (!input.equals("quit")) {
+                                    System.out.println("请输入生产日期：");
+                                    input = scan.next();
+                                    if (input.equals("quit"))
+                                        break;
+                                    else {
+                                        commodity.mnDate = input;
+                                        while (!input.equals("quit")) {
+                                            System.out.println("请输入型号：");
+                                            input = scan.next();
+                                            if (input.equals("quit"))
+                                                break;
+                                            else {
+                                                commodity.type = input;
+                                                while (!input.equals("quit")) {
+                                                    System.out.println("请输入进货价：");
+                                                    input = scan.next();
+                                                    if (input.equals("quit"))
+                                                        break;
+                                                    else {
+                                                        commodity.primeCost = Float.parseFloat(input);
+                                                        while (!input.equals("quit")) {
+                                                            System.out.println("请输入零售价格：");
+                                                            input = scan.next();
+                                                            if (input.equals("quit"))
+                                                                break;
+                                                            else {
+                                                                commodity.price = Float.parseFloat(input);
+                                                                while (!input.equals("quit")) {
+                                                                    System.out.println("请输入数量：");
+                                                                    input = scan.next();
+                                                                    if (input.equals("quit"))
+                                                                        break;
+                                                                    else {
+                                                                        /* 商品编号、商品名称、生产厂家、生产日期、型号、进货价、零售价格、数量。 */
+                                                                        commodity.amount = Integer.parseInt(input);
+                                                                        Manager.addCommodity(Excelor.commodityPath,
+                                                                                Excelor.sheetName_commodity,
+                                                                                commodity.serialNO, commodity.name,
+                                                                                commodity.manufacturer,
+                                                                                commodity.mnDate,
+                                                                                commodity.type, commodity.primeCost,
+                                                                                commodity.price, commodity.amount);
+                                                                        System.out.println("添加成功");
+                                                                        return;
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    static void addCommodity() {
+        Commodity commodity = new Commodity();
+        String input = "";
+        Scanner scan = new Scanner(System.in);
+    
+        while (true) {
+            System.out.println("**************添加商品**************");
+            System.out.println("请输入商品编号：");
+            input = scan.next();
+            if (input.equals("quit"))
+                break;
+            else if (!input.matches("\\d+")) {
+                System.out.println("商品编号应为纯数字，请重新输入。");
+                continue;
+            } else {
+                commodity.serialNO = input;
+                while (true) {
+                    System.out.println("请输入商品名称：");
+                    input = scan.next();
+                    if (input.equals("quit"))
+                        break;
+                    else {
+                        commodity.name = input;
+                        while (true) {
+                            System.out.println("请输入商品生产厂家：");
+                            input = scan.next();
+                            if (input.equals("quit"))
+                                break;
+                            else {
+                                commodity.manufacturer = input;
+                                while (true) {
+                                    System.out.println("请输入生产日期（形如2021-11-12）：");
+                                    input = scan.next();
+                                    if (input.equals("quit"))
+                                        break;
+                                    else if (!input.matches("\\d{4}-\\d{2}-\\d{2}")) {
+                                        System.out.println("生产日期格式不正确，请重新输入。");
+                                        continue;
+                                    } else {
+                                        commodity.mnDate = input;
+                                        while (true) {
+                                            System.out.println("请输入型号：");
+                                            input = scan.next();
+                                            if (input.equals("quit"))
+                                                break;
+                                            else {
+                                                commodity.type = input;
+                                                while (true) {
+                                                    System.out.println("请输入进货价：");
+                                                    input = scan.next();
+                                                    if (input.equals("quit"))
+                                                        break;
+                                                    else {
+                                                        try {
+                                                            commodity.primeCost = Float.parseFloat(input);
+                                                        } catch (NumberFormatException e) {
+                                                            System.out.println("请输入有效的数字。");
+                                                            continue;
+                                                        }
+                                                        while (true) {
+                                                            System.out.println("请输入零售价格：");
+                                                            input = scan.next();
+                                                            if (input.equals("quit"))
+                                                                break;
+                                                            else {
+                                                                try {
+                                                                    commodity.price = Float.parseFloat(input);
+                                                                } catch (NumberFormatException e) {
+                                                                    System.out.println("请输入有效的数字。");
+                                                                    continue;
+                                                                }
+                                                                while (true) {
+                                                                    System.out.println("请输入数量：");
+                                                                    input = scan.next();
+                                                                    if (input.equals("quit"))
+                                                                        break;
+                                                                    else {
+                                                                        try {
+                                                                            commodity.amount = Integer.parseInt(input);
+                                                                            commodity.amount = Integer.parseInt(input);
+                                                                            Manager.addCommodity(Excelor.commodityPath,
+                                                                                    Excelor.sheetName_commodity,
+                                                                                    commodity.serialNO, commodity.name,
+                                                                                    commodity.manufacturer,
+                                                                                    commodity.mnDate,
+                                                                                    commodity.type, commodity.primeCost,
+                                                                                    commodity.price, commodity.amount);
+                                                                            System.out.println("添加成功");
+                                                                            scan.close();
+                                                                            return;
+                                                                        } catch (NumberFormatException e) {
+                                                                            System.out.println("请输入有效的整数。");
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        scan.close();
+    }
+    
+
 }
