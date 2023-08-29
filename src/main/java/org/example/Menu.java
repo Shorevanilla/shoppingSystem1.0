@@ -615,6 +615,7 @@ public class Menu {
             row = Excelor.findDataRow(Excelor.commodityPath, Excelor.sheetName_commodity, input, Excelor.Serial_NO);
             
             if (row > -1) {
+                Manager.showSingleCommodity(Excelor.commodityPath, Excelor.sheetName_commodity, row);
                 while (true) {
                     System.out.println("1.商品名称\n2.生产厂家\n3.生产日期\n4.产品型号\n5.进货价\n6.零售价格\n7.数量\n请输入对应数字以修改商品信息：");
                     input = scan.next();
@@ -711,5 +712,32 @@ public class Menu {
         scan.close();
     }
     
-
+  void deleteCommodity(){
+    String input = "";
+        Scanner scan = new Scanner(System.in);
+        int row = -1;
+        System.out.println("*******************删除商品信息*******************");
+        
+        while (true) {
+            System.out.println("请输入商品编号：");
+            input = scan.next();
+            if(input.equals("quit"))
+            break;
+            row = Excelor.findDataRowSinceZero(Excelor.commodityPath, Excelor.sheetName_commodity, input, Excelor.Serial_NO);
+            if(row>-1){
+                Manager.showSingleCommodity(Excelor.commodityPath, Excelor.sheetName_commodity, row);
+                System.out.println("再次输入商品编号确定删除该商品：");
+                if(input.equals( scan.next()))
+               { Excelor.deleteDataInExcel(Excelor.commodityPath, Excelor.sheetName_commodity, row);
+                System.out.println("成功删除商品");
+                break;
+            }
+                else if(input.equals("quit")) break;
+                else continue;
+            }
+            
+        }
+        scan.close();
+  }
+ 
 }

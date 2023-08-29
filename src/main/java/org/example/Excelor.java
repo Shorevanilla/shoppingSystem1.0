@@ -161,6 +161,24 @@ public static int findDataRow(String filePath, String sheetName, String data, in
     }
     return -1; // 未找到，返回-1
 }
+public static int findDataRowSinceZero(String filePath, String sheetName, String data, int searchColumn) {
+    try (Workbook workbook = WorkbookFactory.create(new FileInputStream(filePath))) {
+        Sheet sheet = workbook.getSheet(sheetName);
+
+        for (int rowNum = 0; rowNum <= sheet.getLastRowNum(); rowNum++) {
+            Row row = sheet.getRow(rowNum);
+            if (row != null) {
+                Cell cell = row.getCell(searchColumn);
+                if (cell != null && Excelor.getValueAsString(cell).equals(data)) {
+                    return rowNum ; // 返回行号（行号从0开始）
+                }
+            }
+        }
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+    return -1; // 未找到，返回-1
+}
 
 
 
@@ -226,7 +244,7 @@ public static int findDataRow(String filePath, String sheetName, String data, in
         try (Workbook workbook = new XSSFWorkbook(new FileInputStream(filePath))) {
             Sheet sheet = workbook.getSheet(sheetName);
 
-            if (targetRow >= 1 && targetRow <= sheet.getLastRowNum()) {
+            if (targetRow >= 1 && targetRow <= (sheet.getLastRowNum()+1)) {
                 Row row = sheet.getRow(targetRow - 1); // 行号从1开始，索引从0开始
                 if (row != null) {
                     Cell targetCell = row.getCell(targetColumn, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
@@ -242,7 +260,24 @@ public static int findDataRow(String filePath, String sheetName, String data, in
         }
     }
     
-
+    public static void deleteDataInExcel(String filePath, String sheetName, int targetRow) {
+        try (Workbook workbook = new XSSFWorkbook(new FileInputStream(filePath))) {
+            Sheet sheet = workbook.getSheet(sheetName);
+    
+            if (targetRow >= 0 && targetRow <= sheet.getLastRowNum()) {
+                sheet.shiftRows(targetRow + 1, sheet.getLastRowNum(), -1);
+                
+            }
+    
+            try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
+                workbook.write(fileOut);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    
     public static String getValueAsString(Cell cell) {
         switch (cell.getCellType()) {
             case STRING:

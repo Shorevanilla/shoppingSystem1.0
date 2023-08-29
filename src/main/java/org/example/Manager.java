@@ -8,6 +8,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.usermodel.Cell;
 
 public class Manager {
     String name;
@@ -66,5 +68,44 @@ public class Manager {
 static void modifyCommodityIF(int targetRowIndexint, int targetColumnIndex,String newValue) {
     Excelor.updateDataInExcel(Excelor.commodityPath,Excelor.sheetName_commodity,targetRowIndexint,targetColumnIndex,newValue);
 }
+static void searchSingleCommodity(String serchData,int DataType){
+  switch(DataType){
+    case Excelor.Serial_NO:
+    
+  }
+    
+}
+public static void showSingleCommodity(String filePath, String sheetName, int row) {
+    try (Workbook workbook = WorkbookFactory.create(new FileInputStream(filePath))) {
+        Sheet sheet = workbook.getSheet(sheetName);
+
+        Row targetRow = sheet.getRow(row ); // 行号从0开始，索引从0开始
+        if (targetRow != null) {
+            Cell cellSerialNO = targetRow.getCell(Excelor.Serial_NO);
+            Cell cellName = targetRow.getCell(Excelor.Name);
+            Cell cellManufacturer = targetRow.getCell(Excelor.Manufacturer);
+            Cell cellMnDate = targetRow.getCell(Excelor.MnDate);
+            Cell cellType = targetRow.getCell(Excelor.Type);
+            Cell cellPrimeCost = targetRow.getCell(Excelor.Prime_Cost);
+            Cell cellPrice = targetRow.getCell(Excelor.Price);
+            Cell cellAmount = targetRow.getCell(Excelor.Amount);
+
+            System.out.println("商品编号: " + cellSerialNO.getStringCellValue());
+            System.out.println("商品名称: " + cellName.getStringCellValue());
+            System.out.println("生产厂家: " + cellManufacturer.getStringCellValue());
+            System.out.println("生产日期: " + cellMnDate.getStringCellValue());
+            System.out.println("产品型号: " + cellType.getStringCellValue());
+            System.out.println("进货价: " + cellPrimeCost.getNumericCellValue());
+            System.out.println("零售价格: " + cellPrice.getNumericCellValue());
+            System.out.println("数量: " + cellAmount.getNumericCellValue()+"\n");
+        } else {
+            System.out.println("指定行不存在或为空。");
+        }
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+
+
 }
 
