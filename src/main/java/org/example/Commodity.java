@@ -9,7 +9,6 @@ public class Commodity {
     float  primeCost;
     float  price;
     int    amount;
-
             }
     
     

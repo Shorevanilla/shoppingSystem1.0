@@ -24,6 +24,7 @@ public class Excelor {
     public static String commodityPath="/workspace/shoppingSystem1.0/Commodity.xlsx";
     public static String sheetName_commodity = "Commodity";
     public static final int  Serial_NO=0;
+   // public static final int Name = 1;
     public static final int Manufacturer=2;
     public static final int MnDate=3;
     public static final int Type=4;

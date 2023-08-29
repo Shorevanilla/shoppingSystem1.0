@@ -483,95 +483,7 @@ public class Menu {
         scan.close();
     }
 
-    static void add() {
-        Commodity commodity = new Commodity();
-        String input = "";
-        Scanner scan = new Scanner(System.in);
-
-        while (!input.equals("quit")) {
-            System.out.println("**************添加商品**************");
-            System.out.println("请输入商品编号：");
-            input = scan.next();
-            if (input.equals("quit"))
-                break;
-            else {
-                commodity.serialNO = input;
-                while (!input.equals("quit")) {
-                    System.out.println("请输入商品名称：");
-                    input = scan.next();
-                    if (input.equals("quit"))
-                        break;
-                    else {
-                        commodity.name = input;
-                        while (!input.equals("quit")) {
-                            System.out.println("请输入商品生产厂家：");
-                            input = scan.next();
-                            if (input.equals("quit"))
-                                break;
-                            else {
-                                commodity.manufacturer = input;
-                                while (!input.equals("quit")) {
-                                    System.out.println("请输入生产日期：");
-                                    input = scan.next();
-                                    if (input.equals("quit"))
-                                        break;
-                                    else {
-                                        commodity.mnDate = input;
-                                        while (!input.equals("quit")) {
-                                            System.out.println("请输入型号：");
-                                            input = scan.next();
-                                            if (input.equals("quit"))
-                                                break;
-                                            else {
-                                                commodity.type = input;
-                                                while (!input.equals("quit")) {
-                                                    System.out.println("请输入进货价：");
-                                                    input = scan.next();
-                                                    if (input.equals("quit"))
-                                                        break;
-                                                    else {
-                                                        commodity.primeCost = Float.parseFloat(input);
-                                                        while (!input.equals("quit")) {
-                                                            System.out.println("请输入零售价格：");
-                                                            input = scan.next();
-                                                            if (input.equals("quit"))
-                                                                break;
-                                                            else {
-                                                                commodity.price = Float.parseFloat(input);
-                                                                while (!input.equals("quit")) {
-                                                                    System.out.println("请输入数量：");
-                                                                    input = scan.next();
-                                                                    if (input.equals("quit"))
-                                                                        break;
-                                                                    else {
-                                                                        /* 商品编号、商品名称、生产厂家、生产日期、型号、进货价、零售价格、数量。 */
-                                                                        commodity.amount = Integer.parseInt(input);
-                                                                        Manager.addCommodity(Excelor.commodityPath,
-                                                                                Excelor.sheetName_commodity,
-                                                                                commodity.serialNO, commodity.name,
-                                                                                commodity.manufacturer,
-                                                                                commodity.mnDate,
-                                                                                commodity.type, commodity.primeCost,
-                                                                                commodity.price, commodity.amount);
-                                                                        System.out.println("添加成功");
-                                                                        return;
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+    
 
     static void addCommodity() {
         Commodity commodity = new Commodity();
@@ -682,6 +594,120 @@ public class Menu {
                 }
             }
         }
+        scan.close();
+    }
+    void modifyCommodityIF() {
+        //Commodity commodity = new Commodity();
+        String input = "";
+        Scanner scan = new Scanner(System.in);
+        int row = -1;
+        
+        System.out.println("*******************修改商品信息*******************");
+        
+        while (true) {
+            System.out.println("请输入商品序列号：");
+            input = scan.next();
+            
+            if (input.equals("quit")) {
+                break;
+            }
+            
+            row = Excelor.findDataRow(Excelor.commodityPath, Excelor.sheetName_commodity, input, Excelor.Serial_NO);
+            
+            if (row > -1) {
+                while (true) {
+                    System.out.println("1.商品名称\n2.生产厂家\n3.生产日期\n4.产品型号\n5.进货价\n6.零售价格\n7.数量\n请输入对应数字以修改商品信息：");
+                    input = scan.next();
+                    
+                    if (input.equals("quit")) {
+                        break;
+                    } else {
+                        switch (input) {
+                            case "1":
+                                System.out.println("请输入新的商品名称：");
+                                input = scan.next();
+                                if (!input.equals("quit")) {
+                                    Excelor.updateDataInExcel(Excelor.commodityPath, Excelor.sheetName_commodity, row, Excelor.Name, input);
+                                    System.out.println("商品名称已更新。");
+                                }
+                                break;
+                            case "2":
+                                System.out.println("请输入新的生产厂家：");
+                                input = scan.next();
+                                if (!input.equals("quit")) {
+                                    Excelor.updateDataInExcel(Excelor.commodityPath, Excelor.sheetName_commodity, row, Excelor.Manufacturer, input);
+                                    System.out.println("生产厂家已更新。");
+                                }
+                                break;
+                            case "3":
+                                System.out.println("请输入新的生产日期（形如2021-11-12）：");
+                                input = scan.next();
+                                if (!input.equals("quit")) {
+                                    if (input.matches("\\d{4}-\\d{2}-\\d{2}")) {
+                                        Excelor.updateDataInExcel(Excelor.commodityPath, Excelor.sheetName_commodity, row, Excelor.MnDate, input);
+                                        System.out.println("生产日期已更新。");
+                                    } else {
+                                        System.out.println("生产日期格式不正确。");
+                                    }
+                                }
+                                break;
+                            case "4":
+                                System.out.println("请输入新的产品型号：");
+                                input = scan.next();
+                                if (!input.equals("quit")) {
+                                    Excelor.updateDataInExcel(Excelor.commodityPath, Excelor.sheetName_commodity, row, Excelor.Type, input);
+                                    System.out.println("产品型号已更新。");
+                                }
+                                break;
+                            case "5":
+                                System.out.println("请输入新的进货价：");
+                                input = scan.next();
+                                if (!input.equals("quit")) {
+                                    try {
+                                        float price = Float.parseFloat(input);
+                                        Excelor.updateDataInExcel(Excelor.commodityPath, Excelor.sheetName_commodity, row, Excelor.Prime_Cost, String.valueOf(price));
+                                        System.out.println("进货价已更新。");
+                                    } catch (NumberFormatException e) {
+                                        System.out.println("请输入有效的数字。");
+                                    }
+                                }
+                                break;
+                            case "6":
+                                System.out.println("请输入新的零售价格：");
+                                input = scan.next();
+                                if (!input.equals("quit")) {
+                                    try {
+                                        float price = Float.parseFloat(input);
+                                        Excelor.updateDataInExcel(Excelor.commodityPath, Excelor.sheetName_commodity, row, Excelor.Price, String.valueOf(price));
+                                        System.out.println("零售价格已更新。");
+                                    } catch (NumberFormatException e) {
+                                        System.out.println("请输入有效的数字。");
+                                    }
+                                }
+                                break;
+                            case "7":
+                                System.out.println("请输入新的数量：");
+                                input = scan.next();
+                                if (!input.equals("quit")) {
+                                    try {
+                                        int amount = Integer.parseInt(input);
+                                        Excelor.updateDataInExcel(Excelor.commodityPath, Excelor.sheetName_commodity, row, Excelor.Amount, String.valueOf(amount));
+                                        System.out.println("数量已更新。");
+                                    } catch (NumberFormatException e) {
+                                        System.out.println("请输入有效的整数。");
+                                    }
+                                }
+                                break;
+                            default:
+                                System.out.println("无效的选项。");
+                        }
+                    }
+                }
+            } else {
+                System.out.println("未找到对应的商品序列号。");
+            }
+        }
+        
         scan.close();
     }
     

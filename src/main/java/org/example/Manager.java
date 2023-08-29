@@ -63,5 +63,8 @@ public class Manager {
     }
  
 }
+static void modifyCommodityIF(int targetRowIndexint, int targetColumnIndex,String newValue) {
+    Excelor.updateDataInExcel(Excelor.commodityPath,Excelor.sheetName_commodity,targetRowIndexint,targetColumnIndex,newValue);
+}
 }
 
